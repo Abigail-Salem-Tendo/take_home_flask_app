@@ -14,7 +14,7 @@ def time_complexity_visualizer(algorithm, n_min, n_max, n_step):
     ax.set_ylabel('Running time (seconds)')
     ax.set_title('Algorithm time complexity visualization (Live)')
     line, = ax.plot([], [], 'o-')
-    
+
     for i, n in enumerate(input_sizes):
         start_time = time.time()
         algorithm(n)
