@@ -1,7 +1,7 @@
 import time
 import numpy as np
 import matplotlib
-matplotlib.use('TkAgg')  # interactive backend
+#matplotlib.use('TkAgg')  # interactive backend
 import matplotlib.pyplot as plt
 
 def time_complexity_visualizer(algorithm, n_min, n_max, n_step):
@@ -69,7 +69,7 @@ def nested_loops(n):
 
     
 
-time_complexity_visualizer(bubble_sort, 10, 10000, 10)
+# time_complexity_visualizer(bubble_sort, 10, 10000, 10)
 # time_complexity_visualizer(linear_search, 10, 10000, 10)
 # time_complexity_visualizer(binary_search, 10, 5000, 10)
 # time_complexity_visualizer(nested_loops, 10, 3000, 10)
