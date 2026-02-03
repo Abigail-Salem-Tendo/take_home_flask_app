@@ -4,8 +4,26 @@ import io
 import base64
 import matplotlib.pyplot as plt
 from factorial import (bubble_sort, linear_search, binary_search, nested_loops)
+from sqlalchemy import (create_engine, Table, Column, Integer, String, Float, Text, MetaData)
 app = Flask(__name__)
 
+engine = create_engine("mysql+pymysql://abby:abby@localhost:3306/analysis_db", echo=True)
+metadata = MetaData()
+
+analysis_results = Table(
+    "analysis_results",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("algo", String(50)),
+    Column("items", Integer),
+    Column("steps", Integer),
+    Column("start_time", Float),
+    Column("end_time", Float),
+    Column("total_time_ms", Float),
+    Column("time_complexity", String(20)),
+    Column("graph_base64", Text)
+)
+metadata.create_all(engine)
 ALGORITHMS = {
     "bubble": bubble_sort,
     "linear": linear_search,
