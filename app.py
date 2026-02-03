@@ -4,7 +4,7 @@ import io
 import base64
 import matplotlib.pyplot as plt
 from factorial import (bubble_sort, linear_search, binary_search, nested_loops)
-from sqlalchemy import (create_engine, Table, Column, Integer, String, Float, Text, MetaData)
+from sqlalchemy import (create_engine, Table, Column, Integer, String, Float, Text, MetaData, insert)
 app = Flask(__name__)
 
 engine = create_engine("mysql+pymysql://abby:abby@localhost:3306/analysis_db", echo=True)
@@ -81,5 +81,31 @@ def analyze():
         "total_time": total_time,
         "graph_generated": image_base64
     })
+
+@app.route("/save_analysis", methods=["POST"])
+def save_analysis():
+    data = request.get_json()
+
+    stmt = insert(analysis_results).values(
+        algo=data["algo"],
+        items=data["items"],
+        steps=data["steps"],
+        start_time=data["start_time"],
+        end_time=data["end_time"],
+        total_time_ms=data["total_time_ms"],
+        time_complexity=data["time_complexity"],
+        graph_base64=data["graph_base64"]
+    )
+
+    with engine.connect() as conn:
+        result = conn.execute(stmt)
+        conn.commit()
+        inserted_id = result.inserted_primary_key[0]
+
+    return jsonify({
+        "message": "Analysis saved",
+        "id": inserted_id
+    }), 201
+
 if __name__ == "__main__":
     app.run(port=3000,debug=True)
