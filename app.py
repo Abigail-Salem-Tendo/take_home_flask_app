@@ -3,8 +3,10 @@ import time
 import io
 import base64
 import matplotlib.pyplot as plt
+from sqlalchemy.dialects.mysql import LONGTEXT
+
 from factorial import (bubble_sort, linear_search, binary_search, nested_loops)
-from sqlalchemy import (create_engine, Table, Column, Integer, String, Float, Text, MetaData, insert)
+from sqlalchemy import (create_engine, Table, Column, Integer, String, Float, MetaData, insert)
 app = Flask(__name__)
 
 engine = create_engine("mysql+pymysql://abby:abby@localhost:3306/analysis_db", echo=True)
@@ -21,7 +23,7 @@ analysis_results = Table(
     Column("end_time", Float),
     Column("total_time_ms", Float),
     Column("time_complexity", String(20)),
-    Column("graph_base64", Text)
+    Column("graph_base64", LONGTEXT)
 )
 metadata.create_all(engine)
 ALGORITHMS = {
@@ -43,10 +45,12 @@ def analyze():
         return jsonify({"error": "Unknown algorithm"}), 400
 
     algo_fn = ALGORITHMS[algo]
+    #Capture the overall start time of the analysis
+    overall_start_time = time.time()
 
     input_sizes = []
     execution_times = []
-    total_time = 0.0
+    #total_time = 0.0
 
     for size in range(steps, n + 1, steps):
         start_time = time.time()
@@ -57,8 +61,19 @@ def analyze():
 
         input_sizes.append(size)
         execution_times.append(elapsed_time)
-        total_time += elapsed_time
+        #total_time += elapsed_time
+    #This is the exact end time of all the analysis
+    overall_end_time = time.time()
+    total_time = overall_end_time - overall_start_time
 
+    # Simple mapping for complexity
+    complexity_map = {
+        "bubble": "O(n^2)",
+        "linear": "O(n)",
+        "binary": "O(log n)",
+        "nested": "O(n^2)"
+    }
+#Generate the graph
     plt.figure()
     plt.plot(input_sizes, execution_times, marker="o")
     plt.xlabel("Input size (n)")
@@ -73,13 +88,14 @@ def analyze():
     image_base64 = base64.b64encode(buffer.read()).decode("utf-8")
 
     return jsonify({
-        "algorithm": algo,
-        "n": n,
+        "algo": algo,
+        "items": n,
         "steps": steps,
-        "input_sizes": input_sizes,
-        "execution_times": execution_times,
-        "total_time": total_time,
-        "graph_generated": image_base64
+        "start_time": overall_start_time,
+        "end_time": overall_end_time,
+        "total_time_ms": total_time * 1000,
+        "time_complexity": complexity_map.get(algo, "Unknown"),
+        "graph_base64": image_base64
     })
 
 @app.route("/save_analysis", methods=["POST"])
