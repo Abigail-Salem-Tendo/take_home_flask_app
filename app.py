@@ -42,7 +42,7 @@ def analyze():
     steps = request.args.get("steps", type=int)
 
     if algo not in ALGORITHMS:
-        return jsonify({"error": "Unknown algorithm"}), 400
+        return jsonify({"error": "Unknown algo"}), 400
 
     algo_fn = ALGORITHMS[algo]
     #Capture the overall start time of the analysis
