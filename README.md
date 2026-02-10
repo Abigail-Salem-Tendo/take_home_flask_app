@@ -39,7 +39,7 @@ complexity_visualizer/
 ### 2. Environment Setup
 ```bash
 # Clone the repository
-git clone [https://github.com/your-username/complexity-visualizer.git](https://github.com/your-username/complexity-visualizer.git)
+git clone https://github.com/Abigail-Salem-Tendo/take_home_flask_app.git
 cd complexity_visualizer
 
 # Create and activate virtual environment
